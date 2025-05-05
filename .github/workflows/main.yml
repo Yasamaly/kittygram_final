@@ -42,7 +42,7 @@ jobs:
           path: ~/.cache/pip
           key: pip-${{ hashFiles('backend/requirements.txt') }}
 
-      # Шаг 5: Линтинг кода
+      # Шаг 5: Линтинг кодаа
       - name: Run Ruff linter
         run: |
           pip install ruff
