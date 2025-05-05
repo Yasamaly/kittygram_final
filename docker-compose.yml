@@ -1,27 +1,57 @@
-version: '3'
-
+# docker-compose.yml
+# Убрали строку version: — Compose V2-плагин сам её игнорирует
 volumes:
   pg_data:
   static:
+  media:
 
 services:
   db:
     image: postgres:13
+    env_file: .env
     volumes:
       - pg_data:/var/lib/postgresql/data
+
   backend:
-    build: ./backend/
+    build:
+      context: ./backend
+      args:
+        # Передаём все нужные build‑args, чтобы collectstatic видел vars
+        SECRET_KEY:      ${SECRET_KEY}
+        POSTGRES_DB:     ${POSTGRES_DB}
+        POSTGRES_USER:   ${POSTGRES_USER}
+        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+        DB_HOST:         ${DB_HOST}
+        DB_PORT:         ${DB_PORT}
+    image: kittygram_backend
     env_file: .env
-  frontend:
-    env_file: .env
-    build: ./frontend/
-    command: cp -r /app/build/. /static/
-    volumes:
-      - static:/static
-  gateway:
-    build: ./nginx/
-    env_file: .env
+    depends_on:
+      - db
     ports:
-      - 9000:80
+      - "8000:8000"
     volumes:
-      - static:/static
+      - static:/app/static
+      - media:/app/media
+
+  frontend:
+    build: ./frontend
+    image: kittygram_frontend
+    depends_on:
+      - backend
+    ports:
+      - "3000:8000"
+    volumes:
+      - static:/usr/share/nginx/html/static
+
+  gateway:
+    build: ./nginx
+    image: kittygram_gateway
+    depends_on:
+      - backend
+      - frontend
+    ports:
+      - "80:80"
+    volumes:
+      - static:/volumes/static
+      - media:/volumes/media
+

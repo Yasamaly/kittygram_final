@@ -1,0 +1,6 @@
+# frontend/.dockerignore
+__pycache__
+.git
+*.pyc
+media
+static
