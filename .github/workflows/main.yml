@@ -20,7 +20,17 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.11
+          python-version: 3.10
+
+       - name: Install system deps for Pillow
+         run: |
+           sudo apt-get update
+           sudo apt-get install -y \
+             libjpeg-dev \
+             zlib1g-dev \
+             libtiff5-dev \
+             libfreetype6-dev \
+             libwebp-dev
 
       - name: Install ruff and lint
         run: |
