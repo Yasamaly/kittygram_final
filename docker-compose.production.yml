@@ -1,0 +1,3 @@
+# nginx proxy + certbot ?
+# Certbot: https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-20-04
+version: '3'

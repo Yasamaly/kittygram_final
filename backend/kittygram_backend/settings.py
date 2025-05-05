@@ -1,15 +1,14 @@
-# backend/kittygram_backend/settings.py
+# flake8: noqa
 import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECRET_KEY и DEBUG читаем из .env
-SECRET_KEY = os.environ['SECRET_KEY']
-DEBUG      = os.environ.get('DEBUG', 'False') == 'True'
+SECRET_KEY = 'django-insecure-cg6*%6d51ef8f#4!r3*$vmxm4)abgjw8mo!4y-q*uq1!4$-89$'
 
-# В продакшене подставьте сюда свой хост (или через ALLOWED_HOSTS в .env)
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
+DEBUG = False
+
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'backend', '192.168.124.144', 'yk-hosted-12-31.ydns.eu', 'cloud.yk-hosted-12-31.ydns.eu']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -54,62 +53,72 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'kittygram_backend.wsgi.application'
 
-# Подключаем PostgreSQL из переменных окружения
-if 'POSTGRES_DB' in os.environ:
-    DATABASES = {
-        'default': {
-            'ENGINE':   'django.db.backends.postgresql',
-            'NAME':     os.environ['POSTGRES_DB'],
-            'USER':     os.environ['POSTGRES_USER'],
-            'PASSWORD': os.environ['POSTGRES_PASSWORD'],
-            'HOST':     os.environ.get('DB_HOST', 'db'),
-            'PORT':     os.environ.get('DB_PORT', '5432'),
-        }
+
+DATABASES = {
+    'default': {
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': BASE_DIR / 'db.sqlite3',
+        # Файл .env
+        
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('POSTGRES_DB', 'django'),
+        'USER': os.getenv('POSTGRES_USER', 'django'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', ''),
+        'HOST': os.getenv('DB_HOST', '127.0.0.1'),
+        'PORT': os.getenv('DB_PORT', 5432)
+ 
     }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
+}
 
-# В продакшене обязательно настроить локаль и таймзону
-LANGUAGE_CODE = 'en-us'
-TIME_ZONE     = 'UTC'
-USE_I18N      = True
-USE_L10N      = True
-USE_TZ        = True
 
-# Статика и медиа
-# URL‑префиксы — должны соответствовать proxy в nginx
-STATIC_URL  = '/kittygram/static/'
-MEDIA_URL   = '/kittygram/media/'
+# Password validation
+# https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
-# Куда django collectstatic собирает все файлы
-STATIC_ROOT = BASE_DIR / 'static'
-# Куда django сохраняет загружённые пользователями файлы
-MEDIA_ROOT  = BASE_DIR / 'media'
-
-# Остальные настройки
 AUTH_PASSWORD_VALIDATORS = [
-    { 'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator', },
-    { 'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator', },
-    { 'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator', },
-    { 'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator', },
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
 ]
+
+LANGUAGE_CODE = 'en-us'
+
+TIME_ZONE = 'UTC'
+
+USE_I18N = True
+
+USE_L10N = True
+
+USE_TZ = True
+
+
+# STATIC_URL = '/static/'
+STATIC_URL = '/static_backend/'
+STATIC_ROOT = BASE_DIR / 'static_backend' 
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = '/static/media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# DRF
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated', 
     ],
+
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ],
+
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
-}
 
+}
